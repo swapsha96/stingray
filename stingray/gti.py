@@ -116,9 +116,7 @@ def create_gti_mask(time, gtis, safe_interval=0, min_length=0,
 
     check_gtis(gtis)
 
-    dt_array = np.diff(np.sort(time))
-
-    dt = assign_value_if_none(dt, np.median(dt_array) / 2)
+    dt = assign_value_if_none(dt, np.median(np.diff(np.sort(time))) / 2)
     mask = np.zeros(len(time), dtype=bool)
 
     if not isinstance(safe_interval, collections.Iterable):

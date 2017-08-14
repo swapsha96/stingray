@@ -65,7 +65,6 @@ class Lightcurve(object):
         mjdref: float
             MJD reference (useful in most high-energy mission data)
 
-
         Attributes
         ----------
         time: numpy.ndarray
@@ -187,7 +186,6 @@ class Lightcurve(object):
         self.bin_hi = self.time + 0.5 * self.dt
 
         self.err_dist = err_dist
-
 
         if unsorted:
             self.tstart = np.min(self.time) - 0.5 * self.dt
