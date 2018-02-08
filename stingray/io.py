@@ -861,9 +861,3 @@ def savefig(filename, **kwargs):
                     "then use ``savefig`` to save the figure.")
 
     plt.savefig(filename, **kwargs)
-
-
-class EFPeriodogram(object):
-    def __init__(self, freq=None, stat=None):
-        self.freq = freq
-        self.stat = stat
