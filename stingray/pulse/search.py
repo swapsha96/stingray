@@ -32,7 +32,7 @@ def _folding_search(stat_func, times, frequencies, segment_size=5000,
     start_times = np.arange(times[0], times[-1], segment_size)
     count = 0
     for s in start_times:
-        good = (times >=s) & (times < s + segment_size)
+        good = (times >= s) & (times < s + segment_size)
         ts = times[good]
         if len(ts) < 1 or ts[-1] - ts[0] < 0.2 * segment_size:
             continue
@@ -45,7 +45,7 @@ def _folding_search(stat_func, times, frequencies, segment_size=5000,
                     kwargs_copy = {}
                     for key in kwargs.keys():
                         if isinstance(kwargs[key], collections.Iterable) and \
-                            len(kwargs[key]) == len(times):
+                        len(kwargs[key]) == len(times):
 
                             kwargs_copy[key] = kwargs[key][good]
                         else:
@@ -180,6 +180,7 @@ def z_n_search(times, frequencies, nharm=4, nbin=128, segment_size=5000,
         if expocorr and gti is None:
             raise ValueError('To calculate exposure correction, you need to'
                              ' specify the GTIs')
+
         def stat_fun(t, f, fd=0, **kwargs):
             return z_n(phase, n=nharm,
                        norm=fold_events(t, f, fd, nbin=nbin, **kwargs)[1])
@@ -457,7 +458,8 @@ def phaseogram(times, f, nph=128, nt=32, ph0=0, mjdref=None, fdot=0, fddot=0,
 
 class PulsarPeriodogram(object):
     def __init__(self, freq=None, stat=None, type=None, nbin=None, nharm=None,
-                 n=None, peaks=None, peak_stat=None, best_fits=None, fdots=None):
+                 n=None, peaks=None, peak_stat=None, best_fits=None,
+                 fdots=None):
         """
         A pulsar periodogram object.
         """
