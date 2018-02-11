@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 import warnings
 from stingray import Lightcurve, AveragedPowerspectrum
-from stingray import Crossspectrum, AveragedCrossspectrum, coherence
+from stingray import Crossspectrum, AveragedCrossspectrum, coherence, time_lag
 from stingray import StingrayError
 import copy
 
@@ -38,6 +38,33 @@ class TestCoherenceFunction(object):
         assert len(coh) == 2
         assert np.abs(np.mean(coh)) < 1
 
+class TestTimelagFunction(object):
+
+    def setup_class(self):
+        self.lc1 = Lightcurve([1, 2, 3, 4, 5], [2, 3, 2, 4, 1])
+        self.lc2 = Lightcurve([1, 2, 3, 4, 5], [4, 8, 1, 9, 11])
+
+    def test_time_lag_runs(self):
+        lag = time_lag(self.lc1, self.lc2)
+
+    def test_time_lag_fails_if_data1_not_lc(self):
+        data = np.array([[1,2,3,4,5],[2,3,4,5,1]])
+
+        with pytest.raises(TypeError):
+            lag = time_lag(self.lc1, data)
+
+    def test_time_lag_fails_if_data2_not_lc(self):
+        data = np.array([[1,2,3,4,5],[2,3,4,5,1]])
+
+        with pytest.raises(TypeError):
+            lag = time_lag(data, self.lc2)
+
+    def test_time_lag_computes_correctly(self):
+
+        lag = time_lag(self.lc1, self.lc2)
+
+        assert np.max(lag) <= np.pi
+        assert np.min(lag) >= -np.pi
 
 class TestCoherence(object):
 
@@ -389,19 +416,19 @@ class TestAveragedCrossspectrum(object):
     def test_timelag(self):
         from ..simulator.simulator import Simulator
         dt = 0.1
-        simulator = Simulator(dt, 10000, rms=0.4, mean=200)
+        simulator = Simulator(dt, 10000, rms=0.8, mean=1000)
         test_lc1 = simulator.simulate(2)
         test_lc2 = Lightcurve(test_lc1.time,
                               np.array(np.roll(test_lc1.counts, 2)),
                               err_dist=test_lc1.err_dist,
                               dt=dt)
 
-        cs = AveragedCrossspectrum(test_lc1, test_lc2, segment_size=10,
+        cs = AveragedCrossspectrum(test_lc1, test_lc2, segment_size=5,
                                    norm="none")
 
         time_lag, time_lag_err = cs.time_lag()
 
-        assert np.all(np.abs(time_lag[:10] - 0.1) < 3 * time_lag_err[:10])
+        assert np.all(np.abs(time_lag[:6] - 0.1) < 3 * time_lag_err[:6])
 
     def test_errorbars(self):
         time = np.arange(10000) * 0.1
