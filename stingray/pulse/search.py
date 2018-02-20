@@ -513,19 +513,17 @@ def phaseogram(times, f, nph=128, nt=32, ph0=0, mjdref=None, fdot=0, fddot=0,
 
 
 class PulsarPeriodogram(object):
-    def __init__(self, freq=None, stat=None, type=None, nbin=None, nharm=None,
-                 n=None, peaks=None, peak_stat=None, best_fits=None,
-                 fdots=None):
+    def __init__(self, times, frequencies, nbin=128, nharm=4,
+                 search=epoch_folding_search):
         """
         A pulsar periodogram object.
         """
+        self.times = times
+        self.frequencies = frequencies
+        self.nbin = nbin
+        if search == epoch_folding_search:
+            freq, stat = search(times, frequencies, nbin=nbin)
+        else:
+            freq, stat = search(times, frequencies, nbin=nbin, nharm=nharm)
         self.freq = freq
         self.stat = stat
-        self.type = type
-        self.nbin = nbin
-        self.nharm = nharm
-        self.n = n
-        self.peaks = peaks
-        self.peak_stat = peak_stat
-        self.best_fits = best_fits
-        self.fdots = fdots
