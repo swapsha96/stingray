@@ -504,7 +504,8 @@ class Lightcurve(object):
         True
         """
         if not isinstance(other_lc, Lightcurve):
-            raise ValueError('Lightcurve can only be compared with a Lightcurve Object')
+            raise ValueError(
+                'Lightcurve can only be compared with a Lightcurve Object')
         if (np.allclose(self.time, other_lc.time) and
                 np.allclose(self.counts, other_lc.counts)):
             return True
