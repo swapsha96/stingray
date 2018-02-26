@@ -8,7 +8,11 @@ from abc import ABCMeta, abstractmethod
 import six
 
 
-__all__ = ["VarEnergySpectrum", "RmsEnergySpectrum", "LagEnergySpectrum", "ExcessVarianceSpectrum"]
+__all__ = [
+    "VarEnergySpectrum",
+    "RmsEnergySpectrum",
+    "LagEnergySpectrum",
+    "ExcessVarianceSpectrum"]
 
 
 def _decode_energy_specification(energy_spec):
@@ -117,6 +121,7 @@ class VarEnergySpectrum(object):
         the error bars corresponding to spectrum
 
     """
+
     def __init__(self, events, freq_interval, energy_spec, ref_band=None,
                  bin_time=1, use_pi=False, segment_size=None, events2=None):
 
@@ -311,6 +316,7 @@ class RmsEnergySpectrum(VarEnergySpectrum):
     spectrum_error : array-like
         the errorbars corresponding to spectrum
     """
+
     def _spectrum_function(self):
 
         rms_spec = np.zeros(len(self.energy_intervals))
@@ -323,7 +329,8 @@ class RmsEnergySpectrum(VarEnergySpectrum):
                                                segment_size=self.segment_size,
                                                norm='frac')
             except AssertionError as e:
-                # Avoid "Mean count rate is <= 0. Something went wrong" assertion.
+                # Avoid "Mean count rate is <= 0. Something went wrong"
+                # assertion.
                 simon("AssertionError: " + str(e))
             else:
                 good = (xspect.freq >= self.freq_interval[0]) & \
@@ -393,6 +400,7 @@ class LagEnergySpectrum(VarEnergySpectrum):
     spectrum_error : array-like
         the errorbars corresponding to spectrum
     """
+
     def _spectrum_function(self):
 
         lag_spec = np.zeros(len(self.energy_intervals))
@@ -472,6 +480,7 @@ class ExcessVarianceSpectrum(VarEnergySpectrum):
     spectrum_error : array-like
         the errorbars corresponding to spectrum
     """
+
     def __init__(self, events, freq_interval, energy_spec,
                  bin_time=1, use_pi=False, segment_size=None,
                  normalization='fvar'):

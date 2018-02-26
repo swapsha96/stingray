@@ -89,8 +89,7 @@ def simulate_times(lc, use_spline=False, bin_time=None):
         random_ts = random_ts[good]
 
         len2 = len(random_ts)
-        random_ts = random_ts[:n_predict]
-        random_ts.sort()
+        random_ts = sorted(random_ts[:n_predict])
 
         new_nev = len(random_ts)
         ev_list[nev:nev + new_nev] = random_ts[:]
@@ -98,7 +97,6 @@ def simulate_times(lc, use_spline=False, bin_time=None):
         bin_start += max_bin
 
     # Discard all zero entries at the end
-    time = ev_list[:nev]
-    time.sort()
+    time = sorted(ev_list[:nev])
 
     return time

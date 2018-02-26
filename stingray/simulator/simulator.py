@@ -40,15 +40,15 @@ class Simulator(object):
         self.mean = mean
         self.rms = rms
         self.red_noise = red_noise
-        self.time = dt*np.arange(N)
+        self.time = dt * np.arange(N)
 
         # Initialize a tuple of energy ranges with corresponding light curves
         self.channels = []
 
         self.random_state = utils.get_random_state(random_state)
 
-        assert rms<=1, 'Fractional rms must be less than 1.'
-        assert dt>0, 'Time resolution must be greater than 0'
+        assert rms <= 1, 'Fractional rms must be less than 1.'
+        assert dt > 0, 'Time resolution must be greater than 0'
 
     def simulate(self, *args):
         """
@@ -126,7 +126,7 @@ class Simulator(object):
         """
 
         if isinstance(args[0], (numbers.Integral, float)) and len(args) == 1:
-            return  self._simulate_power_law(args[0])
+            return self._simulate_power_law(args[0])
 
         elif isinstance(args[0], astropy.modeling.Model) and len(args) == 1:
             return self._simulate_model(args[0])
@@ -251,10 +251,10 @@ class Simulator(object):
         """
 
         # Fill in 0 entries until the start time
-        h_zeros = np.zeros(int(start/self.dt))
+        h_zeros = np.zeros(int(start / self.dt))
 
         # Define constant impulse response
-        h_ones = np.ones(int(width/self.dt)) * intensity
+        h_ones = np.ones(int(width / self.dt)) * intensity
 
         return np.append(h_zeros, h_ones)
 
@@ -289,24 +289,24 @@ class Simulator(object):
 
         dt = self.dt
 
-        assert t2>t1, 'Secondary peak must be after primary peak.'
-        assert t3>t2, 'End time must be after secondary peak.'
-        assert p2>p1, 'Secondary peak must be greater than primary peak.'
+        assert t2 > t1, 'Secondary peak must be after primary peak.'
+        assert t3 > t2, 'End time must be after secondary peak.'
+        assert p2 > p1, 'Secondary peak must be greater than primary peak.'
 
         # Append zeros before start time
-        h_primary = np.append(np.zeros(int(t1/dt)), p1)
+        h_primary = np.append(np.zeros(int(t1 / dt)), p1)
 
         # Create a rising exponential of user-provided slope
-        x = np.linspace(t1/dt, t2/dt, (t2-t1)/dt)
-        h_rise = np.exp(rise*x)
+        x = np.linspace(t1 / dt, t2 / dt, (t2 - t1) / dt)
+        h_rise = np.exp(rise * x)
 
         # Evaluate a factor for scaling exponential
-        factor = np.max(h_rise)/(p2-p1)
-        h_secondary = (h_rise/factor) + p1
+        factor = np.max(h_rise) / (p2 - p1)
+        h_secondary = (h_rise / factor) + p1
 
         # Create a decaying exponential until the end time
-        x = np.linspace(t2/dt, t3/dt, (t3-t2)/dt)
-        h_decay = (np.exp((-decay)*(x-4/dt)))
+        x = np.linspace(t2 / dt, t3 / dt, (t3 - t2) / dt)
+        h_decay = (np.exp((-decay) * (x - 4 / dt)))
 
         # Add the three responses
         h = np.append(h_primary, h_secondary)
@@ -329,15 +329,15 @@ class Simulator(object):
         """
 
         # Define frequencies at which to compute PSD
-        w = np.fft.rfftfreq(self.red_noise*self.N, d=self.dt)[1:]
+        w = np.fft.rfftfreq(self.red_noise * self.N, d=self.dt)[1:]
 
         # Draw two set of 'N' guassian distributed numbers
         a1 = self.random_state.normal(size=len(w))
         a2 = self.random_state.normal(size=len(w))
 
         # Multiply by (1/w)^B to get real and imaginary parts
-        real = a1 * np.power((1/w),B/2)
-        imaginary = a2 * np.power((1/w),B/2)
+        real = a1 * np.power((1 / w), B / 2)
+        imaginary = a2 * np.power((1 / w), B / 2)
 
         # Obtain time series
         long_lc = self._find_inverse(real, imaginary)
@@ -369,12 +369,11 @@ class Simulator(object):
         a1 = self.random_state.normal(size=len(s))
         a2 = self.random_state.normal(size=len(s))
 
-        lc = self._find_inverse(a1*s, a2*s)
+        lc = self._find_inverse(a1 * s, a2 * s)
         lc = Lightcurve(self.time, self._extract_and_scale(lc),
                         err_dist='gauss', dt=self.dt)
 
         return lc
-
 
     def _simulate_model(self, model):
         """
@@ -394,22 +393,21 @@ class Simulator(object):
 
         # Frequencies at which the PSD is to be computed
         # (only positive frequencies, since the signal is real)
-        nbins = self.red_noise*self.N
+        nbins = self.red_noise * self.N
         simfreq = np.fft.rfftfreq(nbins, d=self.dt)[1:]
 
         # Compute PSD from model
         simpsd = model(simfreq)
 
-        fac = np.sqrt(simpsd/2.)
-        pos_real   = self.random_state.normal(size=nbins//2)*fac
-        pos_imag   = self.random_state.normal(size=nbins//2)*fac
+        fac = np.sqrt(simpsd / 2.)
+        pos_real = self.random_state.normal(size=nbins // 2) * fac
+        pos_imag = self.random_state.normal(size=nbins // 2) * fac
 
         long_lc = self._find_inverse(pos_real, pos_imag)
 
         lc = Lightcurve(self.time, self._extract_and_scale(long_lc),
                         err_dist='gauss', dt=self.dt)
         return lc
-
 
     def _simulate_model_string(self, model_str, params):
         """
@@ -429,7 +427,7 @@ class Simulator(object):
 
         # Frequencies at which the PSD is to be computed
         # (only positive frequencies, since the signal is real)
-        nbins = self.red_noise*self.N
+        nbins = self.red_noise * self.N
         simfreq = np.fft.rfftfreq(nbins, d=self.dt)[1:]
 
         if model_str in dir(models):
@@ -442,9 +440,9 @@ class Simulator(object):
             else:
                 raise ValueError('Params should be list or dictionary!')
 
-            fac = np.sqrt(simpsd/2.)
-            pos_real   = self.random_state.normal(size=nbins//2)*fac
-            pos_imag   = self.random_state.normal(size=nbins//2)*fac
+            fac = np.sqrt(simpsd / 2.)
+            pos_real = self.random_state.normal(size=nbins // 2) * fac
+            pos_imag = self.random_state.normal(size=nbins // 2) * fac
 
             long_lc = self._find_inverse(pos_real, pos_imag)
 
@@ -509,7 +507,7 @@ class Simulator(object):
         """
 
         # Form complex numbers corresponding to each frequency
-        f = [complex(r, i) for r,i in zip(real,imaginary)]
+        f = [complex(r, i) for r, i in zip(real, imaginary)]
 
         f = np.hstack([self.mean, f])
 
@@ -517,7 +515,7 @@ class Simulator(object):
         f_conj = np.conjugate(np.array(f))
 
         # Obtain time series
-        return np.fft.irfft(f_conj, n=self.red_noise*self.N)
+        return np.fft.irfft(f_conj, n=self.red_noise * self.N)
 
     def _extract_and_scale(self, long_lc):
         """
@@ -543,14 +541,14 @@ class Simulator(object):
         else:
             # Make random cut and extract light curve of length 'N'
             extract = \
-                self.random_state.randint(self.N-1,
-                                          self.red_noise*self.N - self.N+1)
+                self.random_state.randint(self.N - 1,
+                                          self.red_noise * self.N - self.N + 1)
             lc = np.take(long_lc, range(extract, extract + self.N))
 
         avg = np.mean(lc)
         std = np.std(lc)
 
-        return (lc-avg)/std * self.mean * self.rms + self.mean
+        return (lc - avg) / std * self.mean * self.rms + self.mean
 
     def powerspectrum(self, lc, seg_size=None):
         """

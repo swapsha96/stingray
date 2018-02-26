@@ -123,13 +123,14 @@ class Covariancespectrum(object):
             if not self.use_lc:
                 self._create_band_interest(data)
             else:
-                self.band_interest = np.vstack([np.arange(len(data)),
-                                                np.arange(1, len(data)+1, 1)]).T
+                self.band_interest = np.vstack(
+                    [np.arange(len(data)), np.arange(1, len(data) + 1, 1)]).T
         else:
             if np.size(band_interest) < 2:
-                raise ValueError('band_interest must contain at least 2 values '
-                                 '(minimum and maximum values for each band) '
-                                 'and be a 2D array!')
+                raise ValueError(
+                    'band_interest must contain at least 2 values '
+                    '(minimum and maximum values for each band) '
+                    'and be a 2D array!')
 
             self.band_interest = np.atleast_2d(band_interest)
 
@@ -148,8 +149,8 @@ class Covariancespectrum(object):
             self.lcs = self._make_lightcurves(data)
 
         # check whether band of interest contains a Lightcurve object:
-        if np.size(ref_band_interest) == 1  or isinstance(ref_band_interest,
-                                                          Lightcurve):
+        if np.size(ref_band_interest) == 1 or isinstance(ref_band_interest,
+                                                         Lightcurve):
             if isinstance(ref_band_interest, Lightcurve):
                 self.ref_band_lcs = ref_band_interest
             # ref_band_interest must either be a Lightcurve, or must have
@@ -157,8 +158,8 @@ class Covariancespectrum(object):
 
             elif ref_band_interest is None:
                 if self.use_lc:
-                    self.ref_band_lcs = \
-                        self._make_reference_bands_from_lightcurves(ref_band_interest)
+                    self.ref_band_lcs = self._make_reference_bands_from_lightcurves(
+                        ref_band_interest)
                 else:
                     self.ref_band_lcs = \
                         self._make_reference_bands_from_event_data(data)
@@ -180,9 +181,8 @@ class Covariancespectrum(object):
             # curves
             else:
                 if self.use_lc:
-                    self.ref_band_lcs = \
-                        self._make_reference_bands_from_lightcurves(bounds=
-                                                                    ref_band_interest)
+                    self.ref_band_lcs = self._make_reference_bands_from_lightcurves(
+                        bounds=ref_band_interest)
                 else:
                     self.ref_band_lcs = \
                         self._make_reference_bands_from_event_data(data)
@@ -448,7 +448,7 @@ class Covariancespectrum(object):
         else:
             mm = self.nbins
 
-        num = xs_x*err_y + xs_y*err_x + err_x*err_y
+        num = xs_x * err_y + xs_y * err_x + err_x * err_y
         denom = nn * mm * xs_y
 
         return (num / denom)**0.5
@@ -556,7 +556,7 @@ class AveragedCovariancespectrum(Covariancespectrum):
             cv_err = 0.0
             xs = 0.0
 
-            self.nbins = int((tend - tstart)/self.segment_size)
+            self.nbins = int((tend - tstart) / self.segment_size)
             for k in range(self.nbins):
                 start_ind = lc.time.searchsorted(tstart)
                 end_ind = lc.time.searchsorted(tend)
@@ -576,10 +576,9 @@ class AveragedCovariancespectrum(Covariancespectrum):
                 tstart += self.segment_size
                 tend += self.segment_size
 
-
-            covar[i] = cv/self.nbins
-            covar_err[i] = cv_err/self.nbins
-            xs_var[i] = xs/self.nbins
+            covar[i] = cv / self.nbins
+            covar_err[i] = cv_err / self.nbins
+            xs_var[i] = xs / self.nbins
 
         self.unnorm_covar = covar
         energy_covar = covar / xs_var**0.5

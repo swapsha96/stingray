@@ -262,7 +262,6 @@ def create_gti_mask(time, gtis, safe_interval=0, min_length=0,
 
 def create_gti_mask_complete(time, gtis, safe_interval=0, min_length=0,
                              return_new_gtis=False, dt=None, epsilon=0.001):
-
     """Create GTI mask, allowing for non-constant ``dt``.
 
     Assumes that no overlaps are present between GTIs
@@ -469,7 +468,7 @@ def cross_two_gtis(gti0, gti1):
             so = gti_start[other_series][so_pos]
 
             s = np.max([st, so])
-        except:  # pragma: no cover
+        except BaseException:  # pragma: no cover
             continue
 
         # If this start is inside the last interval (It can happen for equal

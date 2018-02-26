@@ -20,7 +20,7 @@ def sinc(x):
     -------
     values : array-like
     """
-    values = np.sinc(x/np.pi)
+    values = np.sinc(x / np.pi)
     return values
 
 
@@ -53,7 +53,7 @@ def sinc_square_model(x, amplitude=1., mean=0., width=1.):
     >>> sinc_square_model(0, amplitude=2.)
     2.0
     """
-    sqvalues = amplitude * sinc((x-mean)/width) ** 2
+    sqvalues = amplitude * sinc((x - mean) / width) ** 2
     return sqvalues
 
 
@@ -94,15 +94,15 @@ def sinc_square_deriv(x, amplitude=1., mean=0., width=1.):
     x_is_zero = x == mean
 
     d_x = 2 * amplitude * \
-        sinc((x-mean)/width) * (
-                  x * np.cos((x-mean)/width) -
-                  np.sin((x - mean) / width)) / ((x - mean) / width) ** 2
+        sinc((x - mean) / width) * (
+            x * np.cos((x - mean) / width) -
+            np.sin((x - mean) / width)) / ((x - mean) / width) ** 2
     d_x = np.asarray(d_x)
-    d_amplitude = sinc((x-mean)/width)**2
+    d_amplitude = sinc((x - mean) / width)**2
     d_x[x_is_zero] = 0
 
-    d_mean = d_x*(-1/width)
-    d_width = d_x*(-(x-mean)/(width)**2)
+    d_mean = d_x * (-1 / width)
+    d_width = d_x * (-(x - mean) / (width)**2)
 
     return [d_amplitude, d_mean, d_width]
 

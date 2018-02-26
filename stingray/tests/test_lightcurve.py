@@ -18,13 +18,16 @@ try:
 except ImportError:
     _H5PY_INSTALLED = False
 
+
 def fvar_fun(lc):
     from stingray.utils import excess_variance
     return excess_variance(lc, normalization='fvar')
 
+
 def nvar_fun(lc):
     from stingray.utils import excess_variance
     return excess_variance(lc, normalization='norm_xs')
+
 
 def evar_fun(lc):
     from stingray.utils import excess_variance
@@ -38,7 +41,7 @@ class TestChunks(object):
         tstart = 0
         tstop = 100
         times = np.arange(tstart, tstop, dt)
-        cls.gti = np.array([[tstart - dt/2, tstop - dt/2]])
+        cls.gti = np.array([[tstart - dt / 2, tstop - dt / 2]])
         # Simulate something *clearly* non-constant
         counts = np.random.poisson(
             10000 + 2000 * np.sin(2 * np.pi * times))
@@ -119,9 +122,10 @@ class TestLightcurve(object):
         """
         times = [1, 2, 3, 4, 5]
         counts = [2, 2, 2, 2, 2]
-        warn_str = ("SIMON says: Stingray only uses poisson err_dist at "
-                    "the moment, We are setting your errors to zero. Sorry for "
-                    "the inconvenience.")
+        warn_str = (
+            "SIMON says: Stingray only uses poisson err_dist at "
+            "the moment, We are setting your errors to zero. Sorry for "
+            "the inconvenience.")
 
         with warnings.catch_warnings(record=True) as w:
             lc = Lightcurve(times, counts, err_dist='gauss')
@@ -147,7 +151,7 @@ class TestLightcurve(object):
             lc = Lightcurve(times, counts)
 
         with pytest.raises(ValueError):
-            lc = Lightcurve(times, [2]*5, err=counts_err)
+            lc = Lightcurve(times, [2] * 5, err=counts_err)
 
     def test_n(self):
         lc = Lightcurve(self.times, self.counts)
@@ -163,8 +167,8 @@ class TestLightcurve(object):
         assert np.all(start + lc.dt / 2 == res)
 
     def test_bin_edges(self):
-        bin_lo = [0.5,  1.5,  2.5,  3.5]
-        bin_hi = [1.5,  2.5,  3.5,  4.5]
+        bin_lo = [0.5, 1.5, 2.5, 3.5]
+        bin_hi = [1.5, 2.5, 3.5, 4.5]
         lc = Lightcurve(self.times, self.counts)
         assert np.allclose(lc.bin_lo, bin_lo)
         assert np.allclose(lc.bin_hi, bin_hi)
@@ -173,7 +177,7 @@ class TestLightcurve(object):
         lc = Lightcurve.make_lightcurve(self.times, self.dt, use_hist=True,
                                         tstart=0.5)
         lc2 = Lightcurve.make_lightcurve(self.times, self.dt, use_hist=False,
-                                        tstart=0.5)
+                                         tstart=0.5)
         assert np.allclose(lc.time, lc2.time)
         assert np.all(lc.counts == lc2.counts)
 
@@ -192,7 +196,7 @@ class TestLightcurve(object):
         lc = Lightcurve.make_lightcurve(times, self.dt, use_hist=True,
                                         tstart=0.5)
         lc2 = Lightcurve.make_lightcurve(times, self.dt, use_hist=False,
-                                        tstart=0.5)
+                                         tstart=0.5)
         assert np.allclose(lc.time, lc2.time)
         assert np.all(lc.counts == lc2.counts)
 
@@ -200,7 +204,7 @@ class TestLightcurve(object):
         tstart = 0.0
         lc = Lightcurve.make_lightcurve(self.times, self.dt, tstart=0.0)
         assert lc.tstart == tstart
-        assert lc.time[0] == tstart + 0.5*self.dt
+        assert lc.time[0] == tstart + 0.5 * self.dt
 
     def test_tseg(self):
         tstart = 0.0
@@ -220,7 +224,7 @@ class TestLightcurve(object):
         tseg = 5.5
         lc = Lightcurve.make_lightcurve(self.times, self.dt,
                                         tseg=tseg, tstart=tstart)
-        assert lc.tseg == int(tseg/self.dt)
+        assert lc.tseg == int(tseg / self.dt)
 
     def test_correct_timeresolution(self):
         lc = Lightcurve.make_lightcurve(self.times, self.dt)
@@ -231,7 +235,7 @@ class TestLightcurve(object):
         tstart = 0.0
         tseg = 4.0
 
-        toa = np.hstack([np.random.uniform(i, i+1, size=n)
+        toa = np.hstack([np.random.uniform(i, i + 1, size=n)
                          for i, n in enumerate(ncounts)])
 
         dt = 1.0
@@ -242,20 +246,20 @@ class TestLightcurve(object):
     def test_countrate(self):
         dt = 0.5
         mean_counts = 2.0
-        times = np.arange(0 + dt/2, 5 - dt/2, dt)
+        times = np.arange(0 + dt / 2, 5 - dt / 2, dt)
         counts = np.zeros_like(times) + mean_counts
         lc = Lightcurve(times, counts)
         assert np.allclose(lc.countrate, np.zeros_like(counts) +
-                           mean_counts/dt)
+                           mean_counts / dt)
 
     def test_input_countrate(self):
         dt = 0.5
         mean_counts = 2.0
-        times = np.arange(0 + dt/2, 5 - dt/2, dt)
+        times = np.arange(0 + dt / 2, 5 - dt / 2, dt)
         countrate = np.zeros_like(times) + mean_counts
         lc = Lightcurve(times, countrate, input_counts=False)
         assert np.allclose(lc.counts, np.zeros_like(countrate) +
-                           mean_counts*dt)
+                           mean_counts * dt)
 
     def test_meanrate(self):
         times = [0.5, 1.0, 1.5, 2.0]
@@ -280,7 +284,7 @@ class TestLightcurve(object):
     def test_creating_lightcurve_raises_type_error_when_input_is_none(self):
         dt = 0.5
         mean_counts = 2.0
-        times = np.arange(0 + dt/2, 5 - dt/2, dt)
+        times = np.arange(0 + dt / 2, 5 - dt / 2, dt)
         counts = np.array([None] * times.shape[0])
         with pytest.raises(TypeError):
             lc = Lightcurve(times, counts)
@@ -288,7 +292,7 @@ class TestLightcurve(object):
     def test_creating_lightcurve_raises_type_error_when_input_is_inf(self):
         dt = 0.5
         mean_counts = 2.0
-        times = np.arange(0 + dt/2, 5 - dt/2, dt)
+        times = np.arange(0 + dt / 2, 5 - dt / 2, dt)
         counts = np.array([np.inf] * times.shape[0])
         with pytest.raises(ValueError):
             lc = Lightcurve(times, counts)
@@ -296,7 +300,7 @@ class TestLightcurve(object):
     def test_creating_lightcurve_raises_type_error_when_input_is_nan(self):
         dt = 0.5
         mean_counts = 2.0
-        times = np.arange(0 + dt/2, 5 - dt/2, dt)
+        times = np.arange(0 + dt / 2, 5 - dt / 2, dt)
         counts = np.array([np.nan] * times.shape[0])
         with pytest.raises(ValueError):
             lc = Lightcurve(times, counts)
@@ -499,23 +503,24 @@ class TestLightcurve(object):
         assert np.all(lc.counts == np.array([2, 2, 3, 3, 4, 4]))
 
     def test_join_different_err_dist_disjoint_times(self):
-        _times = [5 , 6, 7, 8]
-        _counts =[2, 2, 2, 2]
+        _times = [5, 6, 7, 8]
+        _counts = [2, 2, 2, 2]
 
-        lc1 = Lightcurve(self.times, self.counts, err_dist = "poisson")
-        lc2 = Lightcurve(_times, _counts, err_dist = "gauss")
+        lc1 = Lightcurve(self.times, self.counts, err_dist="poisson")
+        lc2 = Lightcurve(_times, _counts, err_dist="gauss")
 
         lc3 = lc1.join(lc2)
 
         assert np.all(lc3.counts_err[:len(self.times)] == lc1.counts_err)
-        assert np.all(lc3.counts_err[len(self.times):] == np.zeros_like(lc2.counts))
+        assert np.all(lc3.counts_err[len(self.times):]
+                      == np.zeros_like(lc2.counts))
 
     def test_join_different_err_dist_overlapping_times(self):
         _times = [3, 4, 5, 6]
         _counts = [4, 4, 4, 4]
 
-        lc1 = Lightcurve(self.times, self.counts, err_dist = "poisson")
-        lc2 = Lightcurve(_times, _counts, err_dist = "gauss")
+        lc1 = Lightcurve(self.times, self.counts, err_dist="poisson")
+        lc2 = Lightcurve(_times, _counts, err_dist="gauss")
 
         with warnings.catch_warnings(record=True) as w:
             lc3 = lc1.join(lc2)
@@ -577,7 +582,7 @@ class TestLightcurve(object):
 
         lc_new = lc.sort(reverse=True)
 
-        assert np.all(lc_new.counts == np.array([5, 20, 40,  10]))
+        assert np.all(lc_new.counts == np.array([5, 20, 40, 10]))
         assert np.all(lc_new.time == np.array([4, 3, 2, 1]))
         assert lc_new.mjdref == mjdref
 
@@ -595,18 +600,16 @@ class TestLightcurve(object):
 
         lc_new = lc.sort_counts(reverse=True)
 
-        assert np.all(lc_new.counts == np.array([40, 20, 10,  5]))
+        assert np.all(lc_new.counts == np.array([40, 20, 10, 5]))
         assert np.all(lc_new.time == np.array([1, 3, 2, 4]))
         assert lc_new.mjdref == mjdref
 
-
-
     def test_sort_reverse(self):
         times = np.arange(1000)
-        counts = np.random.rand(1000)*100
+        counts = np.random.rand(1000) * 100
         lc = Lightcurve(times, counts)
         lc_1 = lc
-        lc_2 = Lightcurve(np.arange(1000, 2000), np.random.rand(1000)*1000)
+        lc_2 = Lightcurve(np.arange(1000, 2000), np.random.rand(1000) * 1000)
         lc_long = lc_1.join(lc_2)  # Or vice-versa
         new_lc_long = lc_long[:]  # Copying into a new object
         assert new_lc_long.n == lc_long.n
@@ -620,7 +623,7 @@ class TestLightcurve(object):
             try:
                 lc.plot()
             except Exception as e:
-                assert type(e) is ImportError
+                assert isinstance(e, ImportError)
                 assert str(e) == "Matplotlib required for plot()"
 
     def test_plot_simple(self):
@@ -736,7 +739,7 @@ class TestLightcurveRebin(object):
         dt = 0.0001220703125
         n = 1384132
         mean_counts = 2.0
-        times = np.arange(dt/2, dt/2 + n*dt, dt)
+        times = np.arange(dt / 2, dt / 2 + n * dt, dt)
         counts = np.zeros_like(times) + mean_counts
         cls.lc = Lightcurve(times, counts)
 
@@ -745,7 +748,7 @@ class TestLightcurveRebin(object):
         lc_binned = self.lc.rebin(dt_new)
         assert np.isclose(lc_binned.dt, dt_new)
         counts_test = np.zeros_like(lc_binned.time) + \
-            self.lc.counts[0]*dt_new/self.lc.dt
+            self.lc.counts[0] * dt_new / self.lc.dt
         assert np.allclose(lc_binned.counts, counts_test)
 
     def test_rebin_even_factor(self):
@@ -754,7 +757,7 @@ class TestLightcurveRebin(object):
         lc_binned = self.lc.rebin(f=f)
         assert np.isclose(dt_new, f * self.lc.dt)
         counts_test = np.zeros_like(lc_binned.time) + \
-            self.lc.counts[0]*dt_new/self.lc.dt
+            self.lc.counts[0] * dt_new / self.lc.dt
         assert np.allclose(lc_binned.counts, counts_test)
 
     def test_rebin_odd(self):
@@ -763,7 +766,7 @@ class TestLightcurveRebin(object):
         assert np.isclose(lc_binned.dt, dt_new)
 
         counts_test = np.zeros_like(lc_binned.time) + \
-            self.lc.counts[0]*dt_new/self.lc.dt
+            self.lc.counts[0] * dt_new / self.lc.dt
         assert np.allclose(lc_binned.counts, counts_test)
 
     def test_rebin_odd_factor(self):
@@ -772,7 +775,7 @@ class TestLightcurveRebin(object):
         lc_binned = self.lc.rebin(f=f)
         assert np.isclose(dt_new, f * self.lc.dt)
         counts_test = np.zeros_like(lc_binned.time) + \
-            self.lc.counts[0]*dt_new/self.lc.dt
+            self.lc.counts[0] * dt_new / self.lc.dt
         assert np.allclose(lc_binned.counts, counts_test)
 
     def rebin_several(self, dt):

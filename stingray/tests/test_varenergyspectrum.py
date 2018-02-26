@@ -40,11 +40,10 @@ class TestVarEnergySpectrum(object):
         tstart = 0.0
         tend = 100.0
         nphot = 1000
-        alltimes = np.random.uniform(tstart, tend, nphot)
-        alltimes.sort()
+        alltimes = sorted(np.random.uniform(tstart, tend, nphot))
         cls.events = EventList(alltimes,
                                energy=np.random.uniform(0.3, 12, nphot),
-                               gti = [[tstart, tend]])
+                               gti=[[tstart, tend]])
         cls.vespec = DummyVarEnergy(cls.events, [0., 10000],
                                     (0.5, 5, 10, "lin"), [0.3, 10],
                                     bin_time=0.1)
@@ -64,7 +63,7 @@ class TestVarEnergySpectrum(object):
 
     def test_ref_band_none(self):
         events = EventList([0.09, 0.21, 0.23, 0.32, 0.4, 0.54],
-                           energy=[0,0,0,0,1,1],
+                           energy=[0, 0, 0, 0, 1, 1],
                            gti=[[0, 0.65]])
         vespec = DummyVarEnergy(events, [0., 10000],
                                 (0, 1, 2, "lin"),
@@ -93,7 +92,7 @@ class TestVarEnergySpectrum(object):
 
     def test_construct_lightcurves(self):
         events = EventList([0.09, 0.21, 0.23, 0.32, 0.4, 0.54],
-                           energy=[0,0,0,0,1,1],
+                           energy=[0, 0, 0, 0, 1, 1],
                            gti=[[0, 0.65]])
         vespec = DummyVarEnergy(events, [0., 10000],
                                 (0, 1, 2, "lin"), [0.5, 1.1],
@@ -106,7 +105,7 @@ class TestVarEnergySpectrum(object):
 
     def test_construct_lightcurves_no_exclude(self):
         events = EventList([0.09, 0.21, 0.23, 0.32, 0.4, 0.54],
-                           energy=[0,0,0,0,1,1],
+                           energy=[0, 0, 0, 0, 1, 1],
                            gti=[[0, 0.65]])
 
         vespec = DummyVarEnergy(events, [0., 10000],
@@ -124,7 +123,7 @@ class TestVarEnergySpectrum(object):
                            gti=[[0, 0.65]])
         vespec = DummyVarEnergy(events, [0., 10000],
                                 (0, 1, 2, "lin"), [0.5, 1.1], use_pi=True,
-                                   bin_time=0.1)
+                                bin_time=0.1)
         base_lc, ref_lc = \
             vespec._construct_lightcurves([0, 0.5],
                                           tstart=0, tstop=0.65)
@@ -198,7 +197,7 @@ class TestLagEnergySpectrum(object):
 
     def test_lagspectrum_values_and_errors(self):
 
-        assert np.all(np.abs(self.lag.spectrum - 0.2) < \
+        assert np.all(np.abs(self.lag.spectrum - 0.2) <
                       3 * self.lag.spectrum_error)
 
     def test_lag_invalid_evlist_warns(self):

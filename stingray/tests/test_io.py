@@ -24,7 +24,8 @@ except ImportError:
     _H5PY_INSTALLED = False
 
 skip_condition = pytest.mark.skipif(not _H5PY_INSTALLED,
-    reason = "H5PY not installed.")
+                                    reason="H5PY not installed.")
+
 
 class TestIO(object):
 
@@ -71,25 +72,28 @@ class TestIO(object):
 
     def test_split_number(self):
         """Test split with high precision numbers."""
-        numbers = np.array([57401.0000003423423400453453, 
-            0.00000574010000003426646], dtype = np.longdouble)
+        numbers = np.array([57401.0000003423423400453453,
+                            0.00000574010000003426646], dtype=np.longdouble)
         number_I, number_F = split_numbers(numbers)
         r_numbers = np.longdouble(number_I) + np.longdouble(number_F)
 
         assert (numbers == r_numbers).all()
 
+
 class TestIOReadWrite(object):
     """A class to test all the read and write functions."""
+
     def __init__(self):
         self.number = 10
         self.str = 'Test'
-        self.list = [1,2,3]
-        self.array = np.array([1,2,3])
+        self.list = [1, 2, 3]
+        self.array = np.array([1, 2, 3])
         self.long_number = np.longdouble(1.25)
-        self.long_array = np.longdouble([1,2,3])
+        self.long_array = np.longdouble([1, 2, 3])
 
     def test_operation(self):
         return self.number * 10
+
 
 class TestFileFormats(object):
 
@@ -110,14 +114,16 @@ class TestFileFormats(object):
         assert (rec_object.array == test_object.array).all()
         assert rec_object.long_number == test_object.long_number
         assert (rec_object.long_array == test_object.long_array).all()
-        
+
         os.remove('test.pickle')
 
     def test_pickle_functions(self):
         """Test if pickle maintains class methods."""
         test_object = TestIOReadWrite()
-        write(test_object,'test.pickle', 'pickle')
-        assert read('test.pickle', 'pickle').test_operation() == test_object.number * 10
+        write(test_object, 'test.pickle', 'pickle')
+        assert read(
+            'test.pickle',
+            'pickle').test_operation() == test_object.number * 10
         os.remove('test.pickle')
 
     @skip_condition
@@ -130,21 +136,22 @@ class TestFileFormats(object):
     def test_hdf5_read(self):
         test_object = TestIOReadWrite()
         write(test_object, 'test.hdf5', 'hdf5')
-        read('test.hdf5','hdf5')
+        read('test.hdf5', 'hdf5')
         os.remove('test.hdf5')
 
     @skip_condition
     def test_hdf5_data_recovery(self):
         test_object = TestIOReadWrite()
         write(test_object, 'test.hdf5', 'hdf5')
-        rec_object = read('test.hdf5','hdf5')
+        rec_object = read('test.hdf5', 'hdf5')
 
         assert rec_object['number'] == test_object.number
         assert rec_object['str'] == test_object.str
         assert (rec_object['list'] == test_object.list).all()
         assert (rec_object['array'] == np.array(test_object.array)).all()
         assert rec_object['long_number'] == np.double(test_object.long_number)
-        assert (rec_object['long_array'] == np.double(np.array(test_object.long_array))).all()
+        assert (rec_object['long_array'] == np.double(
+            np.array(test_object.long_array))).all()
 
         os.remove('test.hdf5')
 
@@ -159,21 +166,21 @@ class TestFileFormats(object):
 
     def test_save_ascii_with_mixed_types(self):
         time = ["bla", 1, 2, 3]
-        counts = [2,3,41,4]
+        counts = [2, 3, 41, 4]
         with pytest.raises(Exception):
-             write(np.array([time, counts]).T,
-                   "ascii_test.txt", "ascii")
+            write(np.array([time, counts]).T,
+                  "ascii_test.txt", "ascii")
 
     def test_save_ascii_with_format(self):
         time = ["bla", 1, 2, 3]
-        counts = [2,3,41,4]
+        counts = [2, 3, 41, 4]
         write(np.array([time, counts]).T,
               filename="ascii_test.txt", format_="ascii",
               fmt=["%s", "%s"])
 
     def test_read_ascii(self):
-        time = [1,2,3,4,5]
-        counts = [5,7,8,2,3]
+        time = [1, 2, 3, 4, 5]
+        counts = [5, 7, 8, 2, 3]
         np.savetxt("ascii_test.txt", np.array([time, counts]).T)
         read("ascii_test.txt", "ascii")
         os.remove("ascii_test.txt")
@@ -186,27 +193,36 @@ class TestFileFormats(object):
     def test_fits_read(self):
         test_object = TestIOReadWrite()
         write(test_object, 'test.fits', 'fits')
-        read('test.fits','fits',cols=['array','number','long_number'])
+        read('test.fits', 'fits', cols=['array', 'number', 'long_number'])
         os.remove('test.fits')
 
     def test_fits_with_multiple_tables(self):
         test_object = TestIOReadWrite()
         write(test_object, 'test.fits', 'fits', tnames=['EVENTS', 'GTI'],
-            colsassign={'number':'GTI', 'array':'GTI'})
+              colsassign={'number': 'GTI', 'array': 'GTI'})
         os.remove('test.fits')
 
     def test_fits_data_recovery(self):
         test_object = TestIOReadWrite()
         write(test_object, 'test.fits', 'fits')
-        rec_object = read('test.fits', 'fits', cols = ['number', 'str', 'list',
-            'array','long_array','long_number'])
+        rec_object = read(
+            'test.fits',
+            'fits',
+            cols=[
+                'number',
+                'str',
+                'list',
+                'array',
+                'long_array',
+                'long_number'])
 
         assert rec_object['NUMBER'] == test_object.number
         assert rec_object['STR'] == test_object.str
         assert (rec_object['LIST'] == test_object.list).all()
         assert (rec_object['ARRAY'] == np.array(test_object.array)).all()
         assert rec_object['LONG_NUMBER'] == np.double(test_object.long_number)
-        assert (rec_object['LONG_ARRAY'] == np.double(np.array(test_object.long_array))).all()
+        assert (rec_object['LONG_ARRAY'] == np.double(
+            np.array(test_object.long_array))).all()
 
         del rec_object
         os.remove('test.fits')
@@ -220,7 +236,7 @@ class TestFileFormats(object):
             try:
                 savefig("test.png")
             except Exception as e:
-                assert type(e) is ImportError
+                assert isinstance(e, ImportError)
                 assert str(e) == "Matplotlib required for savefig()"
 
     def test_savefig_without_plot(self):

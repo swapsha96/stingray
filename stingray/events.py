@@ -80,6 +80,7 @@ class EventList(object):
         PI channels
 
     """
+
     def __init__(self, time=None, energy=None, ncounts=None, mjdref=0, dt=0,
                  notes="", gti=None, pi=None):
 
@@ -224,7 +225,7 @@ class EventList(object):
         self.energy = \
             np.array([energy[
                 np.argwhere(cum_prob == np.min(cum_prob[(cum_prob - r) > 0]))]
-                      for r in R])
+                for r in R])
 
     def join(self, other):
         """

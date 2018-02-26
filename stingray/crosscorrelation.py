@@ -78,8 +78,9 @@ class CrossCorrelation(object):
         # Populate all attributes by ``None` if user passes no lightcurve data
         if lc1 is None or lc2 is None:
             if lc1 is not None or lc2 is not None:
-                raise TypeError("You can't do a cross correlation with just one "
-                                "light curve!")
+                raise TypeError(
+                    "You can't do a cross correlation with just one "
+                    "light curve!")
             else:
                 # both lc1 and lc2 are ``Non.
                 self.corr = None
@@ -92,7 +93,6 @@ class CrossCorrelation(object):
             self._make_corr(lc1, lc2)
 
     def _make_corr(self, lc1, lc2):
-
         """
         Do some checks on the light curves supplied to the method, and then calculate the time
         shifts, time lags and cross correlation.
@@ -120,7 +120,8 @@ class CrossCorrelation(object):
             lc1.dt = lc2.dt
             self.dt = lc1.dt
 
-        # self.lc1 and self.lc2 may get assigned values explicitly in which case there is no need to copy data
+        # self.lc1 and self.lc2 may get assigned values explicitly in which
+        # case there is no need to copy data
         if self.lc1 is None:
             self.lc1 = lc1
         if self.lc2 is None:
@@ -133,7 +134,8 @@ class CrossCorrelation(object):
         # Calculates cross-correlation of two lightcurves
         self.corr = signal.correlate(lc1_counts, lc2_counts, self.mode)
         self.n = len(self.corr)
-        self.time_shift, self.time_lags, self.n = self.cal_timeshift(dt=self.dt)
+        self.time_shift, self.time_lags, self.n = self.cal_timeshift(
+            dt=self.dt)
 
     def cal_timeshift(self, dt=1.0):
         """
@@ -159,7 +161,8 @@ class CrossCorrelation(object):
 
         if self.corr is None:
             if self.lc1 is None or self.lc2 is None:
-                raise StingrayError('lc1 and lc2 should be provided to calculate correlation and time_shift')
+                raise StingrayError(
+                    'lc1 and lc2 should be provided to calculate correlation and time_shift')
             else:
                 # This will cover very rare case of assigning self.lc1 and self.lc2 and self.corr = ``None``.
                 # In this case, correlation is calculated using self.lc1 and self.lc2 and using that correlation data,
@@ -169,7 +172,8 @@ class CrossCorrelation(object):
 
         self.n = len(self.corr)
         dur = int(self.n / 2)
-        # Correlation against all possible lags, positive as well as negative lags are stored
+        # Correlation against all possible lags, positive as well as negative
+        # lags are stored
         x_lags = np.linspace(-dur, dur, self.n)
         self.time_lags = x_lags * self.dt
         # time_shift is the time lag for max. correlation
@@ -177,7 +181,15 @@ class CrossCorrelation(object):
 
         return self.time_shift, self.time_lags, self.n
 
-    def plot(self, labels=None, axis=None, title=None, marker='-', save=False, filename=None, ax=None):
+    def plot(
+            self,
+            labels=None,
+            axis=None,
+            title=None,
+            marker='-',
+            save=False,
+            filename=None,
+            ax=None):
         """
         Plot the :class:`Crosscorrelation` as function using Matplotlib.
         Plot the Crosscorrelation object on a graph ``self.time_lags`` on x-axis and

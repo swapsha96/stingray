@@ -484,9 +484,9 @@ def get_random_state(random_state=None):
         if is_int(random_state):
             random_state = np.random.RandomState(random_state)
         elif not isinstance(random_state, np.random.RandomState):
-            raise ValueError("{value} can't be used to generate a numpy.random.RandomState".format(
-                value=random_state
-            ))
+            raise ValueError(
+                "{value} can't be used to generate a numpy.random.RandomState".format(
+                    value=random_state))
 
     return random_state
 
@@ -713,14 +713,23 @@ def create_window(N, window_type='uniform'):
     if not isinstance(N, int):
         raise TypeError('N (window length) must be an integer')
 
-    windows = ['uniform', 'parzen', 'hamming', 'hanning', 'triangular', 'welch', 'blackmann', 'flat-top']
+    windows = [
+        'uniform',
+        'parzen',
+        'hamming',
+        'hanning',
+        'triangular',
+        'welch',
+        'blackmann',
+        'flat-top']
 
     if not isinstance(window_type, string_types):
         raise TypeError('type of window must be specified as string!')
 
     window_type = window_type.lower()
     if window_type not in windows:
-        raise ValueError("Wrong window type specified or window function is not available")
+        raise ValueError(
+            "Wrong window type specified or window function is not available")
 
     # Return empty array as window if N = 0
     if N == 0:
@@ -770,7 +779,8 @@ def create_window(N, window_type='uniform'):
         a0 = 0.42659
         a1 = 0.49656
         a2 = 0.076849
-        window = a0 - a1 * np.cos((2 * np.pi * n) / N_minus_1) + a2 * np.cos((4 * np.pi * n) / N_minus_1)
+        window = a0 - a1 * np.cos((2 * np.pi * n) / N_minus_1) + \
+            a2 * np.cos((4 * np.pi * n) / N_minus_1)
 
     if window_type == 'flat-top':
         a0 = 1
@@ -779,9 +789,9 @@ def create_window(N, window_type='uniform'):
         a3 = 0.388
         a4 = 0.028
         window = a0 - a1 * np.cos((2 * np.pi * n) / N_minus_1) + \
-                      a2 * np.cos((4 * np.pi * n) / N_minus_1) - \
-                      a3 * np.cos((6 * np.pi * n) / N_minus_1) + \
-                      a4 * np.cos((8 * np.pi * n) / N_minus_1)
+            a2 * np.cos((4 * np.pi * n) / N_minus_1) - \
+            a3 * np.cos((6 * np.pi * n) / N_minus_1) + \
+            a4 * np.cos((8 * np.pi * n) / N_minus_1)
 
     return window
 

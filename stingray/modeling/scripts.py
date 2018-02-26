@@ -119,11 +119,11 @@ def fit_powerspectrum(ps, model, starting_pars, max_post=False, priors=None,
     else:
         lpost = PSDLogLikelihood(ps.freq, ps.power, model, m=ps.m)
 
-
     parest = PSDParEst(ps, fitmethod=fitmethod, max_post=max_post)
     res = parest.fit(lpost, starting_pars, neg=True)
 
     return parest, res
+
 
 def fit_lorentzians(ps, nlor, starting_pars, fit_whitenoise=True,
                     max_post=False, priors=None,
@@ -236,7 +236,7 @@ def fit_lorentzians(ps, nlor, starting_pars, fit_whitenoise=True,
     model = models.Lorentz1D()
 
     if nlor > 1:
-        for i in range( nlor -1):
+        for i in range(nlor - 1):
             model += models.Lorentz1D()
 
     if fit_whitenoise:

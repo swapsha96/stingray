@@ -76,7 +76,8 @@ class TestCrossCorrelation(object):
         assert cr.auto is False
 
     def test_cross_correlation_with_unequal_lc(self):
-        result = np.array([-0.66666667, -0.33333333, -1., 0.66666667, 3.13333333])
+        result = np.array(
+            [-0.66666667, -0.33333333, -1., 0.66666667, 3.13333333])
         lags_result = np.array([-2, -1, 0, 1, 2])
         cr = CrossCorrelation(self.lc1, self.lc_s)
         assert np.allclose(cr.lc1, self.lc1)
@@ -98,7 +99,8 @@ class TestCrossCorrelation(object):
             CrossCorrelation(self.lc1, self.lc2, mode='default')
 
     def test_full_mode_is_correct(self):
-        result = np.array([-1.76, 1.68, 1.92, 2.16, 1.8, -14.44, 11.12, -6.12, 3.64])
+        result = np.array(
+            [-1.76, 1.68, 1.92, 2.16, 1.8, -14.44, 11.12, -6.12, 3.64])
         lags_result = np.array([-4, -3, -2, -1, 0, 1, 2, 3, 4])
         cr = CrossCorrelation(self.lc1, self.lc2, mode='full')
         assert np.allclose(cr.lc1, self.lc1)
@@ -145,7 +147,9 @@ class TestCrossCorrelation(object):
         assert cr.mode == 'same'
         assert cr.auto is False
 
-    @pytest.mark.skipif(HAS_MPL, reason='Matplotlib is already installed if condition is met')
+    @pytest.mark.skipif(
+        HAS_MPL,
+        reason='Matplotlib is already installed if condition is met')
     def test_plot_matplotlib_not_installed(self):
         cr = CrossCorrelation(self.lc1, self.lc2)
         with pytest.raises(ImportError) as excinfo:
@@ -215,7 +219,8 @@ class TestCrossCorrelation(object):
         assert ac.auto is True
 
     def test_auto_correlation_with_full_mode(self):
-        result = np.array([0.56, -1.48, 1.68, -3.36, 5.2, -3.36, 1.68, -1.48, 0.56])
+        result = np.array(
+            [0.56, -1.48, 1.68, -3.36, 5.2, -3.36, 1.68, -1.48, 0.56])
         lags_result = np.array([-4, -3, -2, -1, 0, 1, 2, 3, 4])
         ac = AutoCorrelation(self.lc1, mode='full')
         assert np.allclose(ac.lc1, self.lc1)

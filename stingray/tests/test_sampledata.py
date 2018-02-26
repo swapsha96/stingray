@@ -1,6 +1,7 @@
 
 from ..sampledata import sample_data
 
+
 class TestSampleData(object):
     """ Unit Tests for sampledata.py"""
 

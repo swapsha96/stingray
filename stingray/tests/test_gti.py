@@ -14,6 +14,7 @@ from ..gti import create_gti_mask_complete
 curdir = os.path.abspath(os.path.dirname(__file__))
 datadir = os.path.join(curdir, 'data')
 
+
 class TestGTI(object):
 
     """Real unit tests."""
@@ -83,7 +84,7 @@ class TestGTI(object):
         assert np.all(mask == np.array([0, 1, 0, 0, 0, 0, 0], dtype=bool))
 
     def test_gti_mask_compare(self):
-        arr = np.array([ 0.5, 1.5, 2.5, 3.5])
+        arr = np.array([0.5, 1.5, 2.5, 3.5])
         gti = np.array([[0, 4]])
         mask_c, new_gtis_c = \
             create_gti_mask_complete(arr, gti, return_new_gtis=True,
@@ -94,7 +95,7 @@ class TestGTI(object):
         assert np.all(new_gtis == new_gtis_c)
 
     def test_gti_mask_compare2(self):
-        arr = np.array([ 0.5, 1.5, 2.5, 3.5])
+        arr = np.array([0.5, 1.5, 2.5, 3.5])
         gti = np.array([[0, 4]])
         mask_c, new_gtis_c = \
             create_gti_mask_complete(arr, gti, return_new_gtis=True,
@@ -131,19 +132,20 @@ class TestGTI(object):
         """Test if two non-overlapping GTIs can be detected."""
         gti1 = np.array([[1, 2], [4, 5]])
         gti2 = np.array([[6, 7], [8, 9]])
-        assert check_separate(gti1, gti2) == True
+        assert check_separate(gti1, gti2)
 
     def test_check_separate_empty_case(self):
         """Test if intersection between two GTIs can be detected. """
         gti1 = np.array([[1, 2], [4, 5], [7, 10], [11, 11.2], [12.2, 13.2]])
         gti2 = np.array([])
-        assert check_separate(gti1, gti2) == True
+        assert check_separate(gti1, gti2)
 
     def test_append_gtis(self):
         """Test if two non-overlapping GTIs can be appended. """
         gti1 = np.array([[1, 2], [4, 5]])
         gti2 = np.array([[6, 7], [8, 9]])
-        assert np.all(append_gtis(gti1, gti2) == [[1,2],[4,5],[6,7],[8,9]])
+        assert np.all(append_gtis(gti1, gti2) == [
+                      [1, 2], [4, 5], [6, 7], [8, 9]])
 
     def test_append_overlapping_gtis(self):
         """Test if exception is raised in event of overlapping gtis."""
@@ -162,9 +164,8 @@ class TestGTI(object):
     def test_join_gtis_overlapping(self):
         gti0 = [[0, 1], [2, 3], [4, 8]]
         gti1 = [[7, 8], [10, 11], [12, 13]]
-        assert np.all(join_gtis(gti0, gti1) == np.array([[0, 1], [2, 3], [4, 8],
-                                                         [10, 11], [12, 13]]))
-
+        assert np.all(join_gtis(gti0, gti1) == np.array(
+            [[0, 1], [2, 3], [4, 8], [10, 11], [12, 13]]))
 
     def test_time_intervals_from_gtis(self):
         """Test the division of start and end times to calculate spectra."""

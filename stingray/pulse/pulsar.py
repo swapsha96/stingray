@@ -24,7 +24,7 @@ __all__ = ['pulse_phase', 'phase_exposure', 'fold_events', 'stat',
 def _default_value_if_no_key(dictionary, key, default):
     try:
         return dictionary[key]
-    except:
+    except BaseException:
         return default
 
 
@@ -302,7 +302,7 @@ def fold_detection_level(nbin, epsilon=0.01, ntrial=1):
     if ntrial > 1:
         simon("fold: The treatment of ntrial is very rough. Use with caution")
     from scipy import stats
-    return stats.chi2.isf(epsilon/ntrial, nbin - 1)
+    return stats.chi2.isf(epsilon / ntrial, nbin - 1)
 
 
 def z_n(phase, n=2, norm=1):
@@ -423,9 +423,8 @@ def fftfit_fun(profile, template, amplitude, phase):
     good = freq > 0
     idx = np.arange(0, len(prof_ft), dtype=int)
     sigma = np.std(prof_ft[good])
-    return np.sum(np.absolute(prof_ft -
-                  temp_ft*amplitude*np.exp(-2*np.pi*1.0j*idx*phase))**2 /
-                  sigma)
+    return np.sum(np.absolute(prof_ft - temp_ft * amplitude * \
+                  np.exp(-2 * np.pi * 1.0j * idx * phase))**2 / sigma)
 
 
 def _fft_fun_wrap(pars, data):

@@ -3,7 +3,7 @@ from __future__ import division
 import numpy as np
 from scipy.linalg import toeplitz
 from scipy.fftpack import fftshift, fft2, ifftshift, fft
-from  scipy.linalg import hankel
+from scipy.linalg import hankel
 
 from stingray import lightcurve
 import stingray.utils as utils
@@ -130,21 +130,31 @@ class Bispectrum(object):
             raise TypeError('lc must be a lightcurve.ightcurve object')
 
         # Available Windows. Used to resolve window paramneter
-        WINDOWS = ['uniform', 'parzen', 'hamming', 'hanning', 'triangular', 'welch', 'blackmann', 'flat-top']
+        WINDOWS = [
+            'uniform',
+            'parzen',
+            'hamming',
+            'hanning',
+            'triangular',
+            'welch',
+            'blackmann',
+            'flat-top']
 
         if window:
             if not isinstance(window, str):
                 raise TypeError('Window must be specified as string!')
             window = window.lower()
             if window not in WINDOWS:
-                raise ValueError("Wrong window specified or window function is not available")
+                raise ValueError(
+                    "Wrong window specified or window function is not available")
 
         self.lc = lc
         self.fs = 1 / lc.dt
         self.n = self.lc.n
 
         if maxlag is None:
-            # if maxlag is not specified, it is set to half of length of lightcurve
+            # if maxlag is not specified, it is set to half of length of
+            # lightcurve
             self.maxlag = np.int(self.lc.n / 2)
         else:
             if not (isinstance(maxlag, int)):
@@ -160,7 +170,8 @@ class Bispectrum(object):
             raise TypeError("scale must be a string")
 
         if scale.lower() not in ["biased", "unbiased"]:
-            raise ValueError("scale can only be either 'biased' or 'unbiased'.")
+            raise ValueError(
+                "scale can only be either 'biased' or 'unbiased'.")
         self.scale = scale.lower()
 
         if window is None:
@@ -198,7 +209,7 @@ class Bispectrum(object):
         # 2d even window
         window2d = np.array([window_even, ] * N)
 
-        ## One-sided window with zero padding
+        # One-sided window with zero padding
         window = np.zeros(N)
         window[:self.maxlag + 1] = window_even[self.maxlag:]
         window[self.maxlag:] = 0
@@ -244,7 +255,8 @@ class Bispectrum(object):
         rev_signal = np.repeat(rev_signal, [2 * self.maxlag + 1], axis=0)
 
         # Calulates Cummulant of 1D signal i.e. Lightcurve counts
-        self.cum3 = self.cum3 + np.matmul(np.multiply(toep, rev_signal), toep.transpose())
+        self.cum3 = self.cum3 + \
+            np.matmul(np.multiply(toep, rev_signal), toep.transpose())
 
     def _normalize_cumulant3(self):
         """
@@ -262,13 +274,15 @@ class Bispectrum(object):
             # unbiased Scaling of cummulant
             maxlag1 = self.maxlag + 1
 
-            # Scaling matrix initialized used to do unbiased normalization of cumulant
+            # Scaling matrix initialized used to do unbiased normalization of
+            # cumulant
             scal_matrix = np.zeros((maxlag1, maxlag1), dtype='int64')
 
             # Calculate scaling matrix for unbiased normalization
             for k in range(maxlag1):
                 maxlag1k = (maxlag1 - (k + 1))
-                scal_matrix[k, k:maxlag1] = np.tile(self.n - maxlag1k, (1, maxlag1k + 1))
+                scal_matrix[k, k:maxlag1] = np.tile(
+                    self.n - maxlag1k, (1, maxlag1k + 1))
             scal_matrix += np.triu(scal_matrix, k=1).transpose()
 
             maxlag1ind = np.arange(self.maxlag - 1, -1, -1)
@@ -318,7 +332,6 @@ class Bispectrum(object):
         self.bispec_phase = np.angle((self.bispec))
 
     def plot_cum3(self, axis=None, save=False, filename=None):
-
         """
         Plot the 3rd order cumulant as function of time lags using ``matplotlib``.
         Plot the ``cum3`` attribute on a graph with the ``lags`` attribute on x-axis and y-axis and
@@ -348,7 +361,12 @@ class Bispectrum(object):
         except ImportError:
             raise ImportError("Matplotlib required for plot()")
 
-        cont = plt.contourf(self.lags, self.lags, self.cum3, 100, cmap=plt.cm.Spectral_r)
+        cont = plt.contourf(
+            self.lags,
+            self.lags,
+            self.cum3,
+            100,
+            cmap=plt.cm.Spectral_r)
         plt.colorbar(cont)
         plt.title('3rd Order Cumulant')
         plt.xlabel('lags 1')
@@ -365,7 +383,6 @@ class Bispectrum(object):
         return plt
 
     def plot_mag(self, axis=None, save=False, filename=None):
-
         """
         Plot the magnitude of bispectrum as function of freq using ``matplotlib``.
         Plot the ``bispec_mag`` attribute on a graph with ``freq`` attribute on the x-axis and y-axis and
@@ -394,7 +411,12 @@ class Bispectrum(object):
         except ImportError:
             raise ImportError("Matplotlib required for plot()")
 
-        cont = plt.contourf(self.freq, self.freq, self.bispec_mag, 100, cmap=plt.cm.Spectral_r)
+        cont = plt.contourf(
+            self.freq,
+            self.freq,
+            self.bispec_mag,
+            100,
+            cmap=plt.cm.Spectral_r)
         plt.colorbar(cont)
         plt.title('Bispectrum Magnitude')
         plt.xlabel('freq 1')
@@ -411,7 +433,6 @@ class Bispectrum(object):
         return plt
 
     def plot_phase(self, axis=None, save=False, filename=None):
-
         """
         Plot the phase of bispectrum as function of freq using ``matplotlib``.
         Plot the ``bispec_phase`` attribute on a graph with ``phase`` attribute on the x-axis and
@@ -440,7 +461,12 @@ class Bispectrum(object):
         except ImportError:
             raise ImportError("Matplotlib required for plot()")
 
-        cont = plt.contourf(self.freq, self.freq, self.bispec_phase, 100, cmap=plt.cm.Spectral_r)
+        cont = plt.contourf(
+            self.freq,
+            self.freq,
+            self.bispec_phase,
+            100,
+            cmap=plt.cm.Spectral_r)
         plt.colorbar(cont)
         plt.title('Bispectrum Phase')
         plt.xlabel('freq 1')

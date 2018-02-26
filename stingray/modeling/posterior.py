@@ -20,21 +20,35 @@ from stingray import Lightcurve, Powerspectrum
 
 #from stingray.modeling.parametricmodels import logmin
 
-__all__ = ["set_logprior", "Posterior", "PSDPosterior", "LogLikelihood", "PoissonLogLikelihood",
-           "PSDLogLikelihood", "GaussianLogLikelihood", "LaplaceLogLikelihood",
-           "PoissonPosterior", "GaussianPosterior", "LaplacePosterior",
-           "PriorUndefinedError", "LikelihoodUndefinedError"]
+__all__ = [
+    "set_logprior",
+    "Posterior",
+    "PSDPosterior",
+    "LogLikelihood",
+    "PoissonLogLikelihood",
+    "PSDLogLikelihood",
+    "GaussianLogLikelihood",
+    "LaplaceLogLikelihood",
+    "PoissonPosterior",
+    "GaussianPosterior",
+    "LaplacePosterior",
+    "PriorUndefinedError",
+    "LikelihoodUndefinedError"]
 
 logmin = -10000000000000000.0
+
 
 class PriorUndefinedError(Exception):
     pass
 
+
 class LikelihoodUndefinedError(Exception):
     pass
 
+
 class IncorrectParameterError(Exception):
     pass
+
 
 def set_logprior(lpost, priors):
     """
@@ -96,7 +110,7 @@ def set_logprior(lpost, priors):
     """
 
     # get the number of free parameters in the model
-    #free_params = [p for p in lpost.model.param_names if not
+    # free_params = [p for p in lpost.model.param_names if not
     #                getattr(lpost.model, p).fixed]
     free_params = [key for key, l in lpost.model.fixed.items() if not l]
 
@@ -119,12 +133,13 @@ def set_logprior(lpost, priors):
         """
 
         if len(t0) != len(free_params):
-            raise IncorrectParameterError("The number of parameters passed into "
-                                          "the prior does not match the number "
-                                          "of parameters in the model.")
+            raise IncorrectParameterError(
+                "The number of parameters passed into "
+                "the prior does not match the number "
+                "of parameters in the model.")
 
-        logp = 0.0 # initialize log-prior
-        ii = 0 # counter for the variable parameter
+        logp = 0.0  # initialize log-prior
+        ii = 0  # counter for the variable parameter
 
         # loop through all parameter names, but only compute
         # prior for those that are not fixed
@@ -248,7 +263,6 @@ class GaussianLogLikelihood(LogLikelihood):
             if not self.model.fixed[pname]:
                 self.npar += 1
 
-
     def evaluate(self, pars, neg=False):
         """
         Evaluate the Gaussian log-likelihood for a given set of parameters.
@@ -281,8 +295,8 @@ class GaussianLogLikelihood(LogLikelihood):
 
         mean_model = self.model(self.x)
 
-        loglike = np.sum(-0.5*np.log(2.*np.pi) - np.log(self.yerr) -
-                         (self.y-mean_model)**2/(2.*self.yerr**2))
+        loglike = np.sum(-0.5 * np.log(2. * np.pi) - np.log(self.yerr) -
+                         (self.y - mean_model)**2 / (2. * self.yerr**2))
 
         if not np.isfinite(loglike):
             loglike = logmin
@@ -326,6 +340,7 @@ class PoissonLogLikelihood(LogLikelihood):
     npar : int
         The number of free parameters in the model
     """
+
     def __init__(self, x, y, model):
 
         self.x = x
@@ -368,8 +383,8 @@ class PoissonLogLikelihood(LogLikelihood):
 
         mean_model = self.model(self.x)
 
-        loglike = np.sum(-mean_model + self.y*np.log(mean_model) \
-               - scipy_gammaln(self.y + 1.))
+        loglike = np.sum(-mean_model + self.y * np.log(mean_model)
+                         - scipy_gammaln(self.y + 1.))
 
         if not np.isfinite(loglike):
             loglike = logmin
@@ -460,21 +475,20 @@ class PSDLogLikelihood(LogLikelihood):
 
         _fitter_to_model_params(self.model, pars)
 
-
         mean_model = self.model(self.x)
 
         with warnings.catch_warnings(record=True) as out:
 
             if self.m == 1:
                 loglike = -np.sum(np.log(mean_model)) - \
-                          np.sum(self.y/mean_model)
+                    np.sum(self.y / mean_model)
 
             else:
 
-                    loglike = -2.0*self.m*(np.sum(np.log(mean_model)) +
-                                       np.sum(self.y/mean_model) +
-                                       np.sum((2.0 / (2. * self.m) - 1.0) *
-                                              np.log(self.y)))
+                loglike = -2.0 * self.m * (np.sum(np.log(mean_model)) +
+                                           np.sum(self.y / mean_model) +
+                                           np.sum((2.0 / (2. * self.m) - 1.0) *
+                                                  np.log(self.y)))
 
         if not np.isfinite(loglike):
             loglike = logmin
@@ -483,6 +497,7 @@ class PSDLogLikelihood(LogLikelihood):
             return -loglike
         else:
             return loglike
+
 
 class LaplaceLogLikelihood(LogLikelihood):
     """
@@ -563,8 +578,8 @@ class LaplaceLogLikelihood(LogLikelihood):
 
         with warnings.catch_warnings(record=True) as out:
 
-                        loglike = np.sum(-np.log(2.*self.yerr) - \
-                                  (np.abs(self.y - mean_model)/self.yerr))
+            loglike = np.sum(-np.log(2. * self.yerr) -
+                             (np.abs(self.y - mean_model) / self.yerr))
 
         if not np.isfinite(loglike):
             loglike = logmin
@@ -626,6 +641,7 @@ class Posterior(object):
         arxiv: 1205.4446
 
     """
+
     def __init__(self, x, y, model, **kwargs):
 
         self.x = x
@@ -672,9 +688,9 @@ class Posterior(object):
                                       "Cannot calculate posterior!")
 
         if not hasattr(self, "loglikelihood"):
-            raise LikelihoodUndefinedError("There is no likelihood implemented. " +
-                                           "Cannot calculate posterior!")
-
+            raise LikelihoodUndefinedError(
+                "There is no likelihood implemented. " +
+                "Cannot calculate posterior!")
 
         logpr = self.logprior(t0)
         loglike = self.loglikelihood(t0)
@@ -748,7 +764,7 @@ class PSDPosterior(Posterior):
         self.m = m
         Posterior.__init__(self, freq, power, model)
 
-        if not priors is None:
+        if priors is not None:
             self.logprior = set_logprior(self, priors)
 
 
@@ -791,6 +807,7 @@ class PoissonPosterior(Posterior):
         The model for the power spectrum.
 
     """
+
     def __init__(self, x, y, model, priors=None):
 
         self.x = x
@@ -800,7 +817,7 @@ class PoissonPosterior(Posterior):
 
         Posterior.__init__(self, self.x, self.y, model)
 
-        if not priors is None:
+        if priors is not None:
             self.logprior = set_logprior(self, priors)
 
 
@@ -835,6 +852,7 @@ class GaussianPosterior(Posterior):
         itself or the ``self.logposterior`` method without defining a prior.
 
     """
+
     def __init__(self, x, y, yerr, model, priors=None):
 
         self.loglikelihood = GaussianLogLikelihood(x, y, yerr, model)
@@ -843,8 +861,9 @@ class GaussianPosterior(Posterior):
 
         self.yerr = yerr
 
-        if not priors is None:
+        if priors is not None:
             self.logprior = set_logprior(self, priors)
+
 
 class LaplacePosterior(Posterior):
     """
@@ -877,6 +896,7 @@ class LaplacePosterior(Posterior):
         itself or the ``self.logposterior`` method without defining a prior.
 
     """
+
     def __init__(self, x, y, yerr, model, priors=None):
 
         self.loglikelihood = LaplaceLogLikelihood(x, y, yerr, model)
@@ -885,5 +905,5 @@ class LaplacePosterior(Posterior):
 
         self.yerr = yerr
 
-        if not priors is None:
+        if priors is not None:
             self.logprior = set_logprior(self, priors)

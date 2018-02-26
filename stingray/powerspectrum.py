@@ -189,6 +189,7 @@ class Powerspectrum(Crossspectrum):
         The total number of photons in the light curve
 
     """
+
     def __init__(self, lc=None, norm='frac', gti=None):
         Crossspectrum.__init__(self, lc1=lc, lc2=lc, norm=norm, gti=gti)
         self.nphots = self.nphots1
@@ -356,7 +357,8 @@ class Powerspectrum(Crossspectrum):
 
         if np.size(self.m) == 1:
             # calculate p-values for all powers
-            # leave out zeroth power since it just encodes the number of photons!
+            # leave out zeroth power since it just encodes the number of
+            # photons!
             pv = np.array([classical_pvalue(power, self.m)
                            for power in self.power])
         else:
@@ -437,6 +439,7 @@ class AveragedPowerspectrum(AveragedCrossspectrum, Powerspectrum):
         The total number of photons in the light curve
 
     """
+
     def __init__(self, lc=None, segment_size=None, norm="frac", gti=None):
 
         self.type = "powerspectrum"
@@ -665,7 +668,6 @@ class DynamicalPowerspectrum(AveragedPowerspectrum):
         return np.array(max_positions)
 
     def rebin_time(self, dt_new, method='sum'):
-
         """
         Rebin the Dynamic Power Spectrum to a new time resolution.
         While the new resolution need not be an integer multiple of the
