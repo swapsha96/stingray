@@ -22,7 +22,7 @@ from .gti import _get_gti_from_extension, load_gtis
 try:
     # Python 2
     import cPickle as pickle
-except:
+except BaseException:
     # Python 3
     import pickle
 
@@ -30,7 +30,7 @@ _H5PY_INSTALLED = True
 
 try:
     import h5py
-except:
+except BaseException:
     _H5PY_INSTALLED = False
 
 
@@ -66,7 +66,7 @@ def high_precision_keyword_read(hdr, keyword):
     try:
         value = np.longdouble(hdr[keyword])
         return value
-    except:
+    except BaseException:
         pass
     try:
         if len(keyword) == 8:
@@ -74,7 +74,7 @@ def high_precision_keyword_read(hdr, keyword):
         value = np.longdouble(hdr[keyword + 'I'])
         value += np.longdouble(hdr[keyword + 'F'])
         return value
-    except:
+    except BaseException:
         return None
 
 
@@ -84,7 +84,7 @@ def _get_additional_data(lctable, additional_columns):
         for a in additional_columns:
             try:
                 additional_data[a] = np.array(lctable.field(a))
-            except:  # pragma: no cover
+            except BaseException:  # pragma: no cover
                 if a == 'PI':
                     logging.warning('Column PI not found. Trying with PHA')
                     additional_data[a] = np.array(lctable.field('PHA'))
@@ -97,7 +97,6 @@ def _get_additional_data(lctable, additional_columns):
 def load_events_and_gtis(fits_file, additional_columns=None,
                          gtistring='GTI,STDGTI',
                          gti_file=None, hduname='EVENTS', column='TIME'):
-
     """Load event lists and GTIs from one or more files.
 
     Loads event list from HDU EVENTS of file ``fits_file``, with Good Time
@@ -138,7 +137,7 @@ def load_events_and_gtis(fits_file, additional_columns=None,
     # Load data table
     try:
         lctable = lchdulist[hduname].data
-    except:  # pragma: no cover
+    except BaseException:  # pragma: no cover
         logging.warning('HDU %s not found. Trying first extension' % hduname)
         lctable = lchdulist[1].data
 
@@ -148,7 +147,7 @@ def load_events_and_gtis(fits_file, additional_columns=None,
     # Read TIMEZERO keyword and apply it to events
     try:
         timezero = np.longdouble(lchdulist[1].header['TIMEZERO'])
-    except:  # pragma: no cover
+    except BaseException:  # pragma: no cover
         logging.warning("No TIMEZERO in file")
         timezero = np.longdouble(0.)
 
@@ -158,7 +157,7 @@ def load_events_and_gtis(fits_file, additional_columns=None,
     try:
         t_start = np.longdouble(lchdulist[1].header['TSTART'])
         t_stop = np.longdouble(lchdulist[1].header['TSTOP'])
-    except:  # pragma: no cover
+    except BaseException:  # pragma: no cover
         logging.warning("Tstart and Tstop error. using defaults")
         t_start = ev_list[0]
         t_stop = ev_list[-1]
@@ -172,7 +171,7 @@ def load_events_and_gtis(fits_file, additional_columns=None,
             gti_list = \
                 _get_gti_from_extension(
                     lchdulist, accepted_gtistrings=accepted_gtistrings)
-        except:  # pragma: no cover
+        except BaseException:  # pragma: no cover
             warnings.warn("No extensions found with a valid name. "
                           "Please check the `accepted_gtistrings` values.")
             gti_list = np.array([[t_start, t_stop]],
@@ -253,7 +252,7 @@ def read_header_key(fits_file, key, hdu=1):
     hdulist = fits.open(fits_file)
     try:
         value = hdulist[hdu].header[key]
-    except:  # pragma: no cover
+    except BaseException:  # pragma: no cover
         value = ''
     hdulist.close()
     return value
