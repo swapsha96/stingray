@@ -121,6 +121,7 @@ class Lightcurve(object):
         It propagates to Spectrum classes.
 
     """
+
     def __init__(self, time, counts, err=None, input_counts=True,
                  gti=None, err_dist='poisson', mjdref=0, dt=None):
 
@@ -321,9 +322,9 @@ class Lightcurve(object):
                   "We are setting the errors to zero to avoid complications.")
             new_counts_err = np.zeros_like(new_counts)
         elif self.err_dist.lower() in valid_statistics:
-                new_counts_err = \
-                    np.sqrt(np.add(self.counts_err[mask_self]**2,
-                                   other.counts_err[mask_other]**2))
+            new_counts_err = \
+                np.sqrt(np.add(self.counts_err[mask_self]**2,
+                               other.counts_err[mask_other]**2))
             # More conditions can be implemented for other statistics
         else:
             raise StingrayError("Statistics not recognized."
@@ -548,7 +549,6 @@ class Lightcurve(object):
     @staticmethod
     def make_lightcurve(toa, dt, tseg=None, tstart=None, gti=None, mjdref=0,
                         use_hist=False):
-
         """
         Make a light curve out of photon arrival times, with a given time resolution ``dt``.
         Note that ``dt`` should be larger than the native time resolution of the instrument
