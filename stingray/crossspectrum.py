@@ -103,7 +103,11 @@ class Crossspectrum(object):
         The normalization of the (real part of the) cross spectrum.
 
     amplitude: bool, optional, default ``False``
-        Parameter to choose between real component and amplitude of the cross spectrum.
+        Parameter to choose between real component and amplitude of the cross
+        spectrum.
+
+    pos_freq: bool, optional, default ``True`` Parameter to choose between
+        cross spectrum where frequencies are positive and total cross spectrum.
 
     Other Parameters
     ----------------
@@ -143,7 +147,7 @@ class Crossspectrum(object):
     nphots2: float
         The total number of photons in light curve 2
     """
-    def __init__(self, lc1=None, lc2=None, norm='none', gti=None, amplitude=False):
+    def __init__(self, lc1=None, lc2=None, norm='none', gti=None, amplitude=False, pos_freqs=True):
 
         if isinstance(norm, str) is False:
             raise TypeError("norm must be a string")
@@ -173,6 +177,7 @@ class Crossspectrum(object):
         self.lc1 = lc1
         self.lc2 = lc2
         self.amplitude = amplitude
+        self.pos_freqs = pos_freqs
 
         self._make_crossspectrum(lc1, lc2)
 
@@ -317,9 +322,15 @@ class Crossspectrum(object):
         fourier_2 = scipy.fftpack.fft(lc2.counts)  # do Fourier transform 2
 
         freqs = scipy.fftpack.fftfreq(lc1.n, lc1.dt)
-        cross = fourier_1[freqs > 0] * np.conj(fourier_2[freqs > 0])
 
-        return freqs[freqs > 0], cross
+        if self.pos_freqs:
+            freq_indices = freqs > 0
+        else:
+            freq_indices = np.ones(len(freqs), dtype=bool)
+
+        cross = fourier_1[freq_indices] * np.conj(fourier_2[freq_indices])
+
+        return freqs[freq_indices], cross
 
     def rebin(self, df=None, f=None, method="mean"):
         """
@@ -647,6 +658,13 @@ class AveragedCrossspectrum(Crossspectrum):
     norm: {``frac``, ``abs``, ``leahy``, ``none``}, default ``none``
         The normalization of the (real part of the) cross spectrum.
 
+    amplitude: bool, optional, default ``False``
+        Parameter to choose between real component and amplitude of the cross
+        spectrum.
+
+    pos_freq: bool, optional, default ``True`` Parameter to choose between
+        cross spectrum where frequencies are positive and total cross spectrum.
+
     Other Parameters
     ----------------
     gti: 2-d float array
@@ -691,7 +709,7 @@ class AveragedCrossspectrum(Crossspectrum):
 
     """
     def __init__(self, lc1=None, lc2=None, segment_size=None,
-                 norm='none', gti=None):
+                 norm='none', gti=None, amplitude=False, pos_freqs=True):
 
         self.type = "crossspectrum"
 
@@ -702,7 +720,8 @@ class AveragedCrossspectrum(Crossspectrum):
 
         self.segment_size = segment_size
 
-        Crossspectrum.__init__(self, lc1, lc2, norm, gti=gti)
+        Crossspectrum.__init__(self, lc1, lc2, norm, gti=gti,
+                               amplitude=amplitude, pos_freqs=pos_freqs)
 
         return
 
