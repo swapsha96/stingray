@@ -9,7 +9,7 @@ import scipy.optimize
 from stingray.lightcurve import Lightcurve
 from stingray.utils import rebin_data, simon, rebin_data_log
 from stingray.exceptions import StingrayError
-from stingray.gti import cross_two_gtis, bin_intervals_from_gtis, check_gtis
+from stingray.gti import cross_two_gtis, bin_intervals_from_gtis, check_gtis, append_gtis
 import copy
 
 __all__ = ["Crossspectrum", "AveragedCrossspectrum", "coherence", "time_lag"]
@@ -762,12 +762,15 @@ class AveragedCrossspectrum(Crossspectrum):
         # In case a small difference exists, ignore it
         lc1.dt = lc2.dt
 
+        gti = cross_two_gtis(lc1.gti, lc2.gti)
         if self.gti is None:
-            self.gti = cross_two_gtis(lc1.gti, lc2.gti)
-            lc1.gti = lc2.gti = self.gti
-            lc1._apply_gtis()
-            lc2._apply_gtis()
+            self.gti = gti
+        else:
+            self.gti = append_gtis(self.gti, gti)
 
+        lc1.gti = lc2.gti = gti
+        lc1._apply_gtis()
+        lc2._apply_gtis()
         check_gtis(self.gti)
 
         cs_all = []
