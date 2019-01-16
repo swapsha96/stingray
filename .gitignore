@@ -49,6 +49,7 @@ distribute-*.tar.gz
 *~
 .pytest_cache
 v
+.vscode
 
 # Mac OSX
 .DS_Store

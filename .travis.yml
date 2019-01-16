@@ -45,7 +45,7 @@ matrix:
     fast_finish: true
     include:
         - python: 3.4
-          env: SCIPY_VERSION=0.18.0 NUMPY_VERSION=1.11 ASTROPY_VERSION=1.3 PIP_DEPENDENCIES='pytest-catchlog' SETUP_CMD='test --coverage'
+          env: SCIPY_VERSION=0.18.0 NUMPY_VERSION=1.13 ASTROPY_VERSION=1.3 PIP_DEPENDENCIES='pytest-catchlog' SETUP_CMD='test --coverage'
 
         - python: 3.5
           env: PIP_DEPENDENCIES='git+https://git@github.com/nanograv/pint.git jplephem emcee statsmodels corner' SETUP_CMD='test --remote-data --coverage'
@@ -77,11 +77,11 @@ matrix:
 
         # Try older scipy versions
         - python: 2.7
-          env: SCIPY_VERSION=0.16.0 NUMPY_VERSION=1.11
+          env: SCIPY_VERSION=0.16.0 NUMPY_VERSION=1.13
 
         # Try older scipy versions
         - python: 3.4
-          env: SCIPY_VERSION=0.16.0 NUMPY_VERSION=1.11
+          env: SCIPY_VERSION=0.16.0 NUMPY_VERSION=1.13
 
         # Try Astropy development version
         - python: 3.5
@@ -90,11 +90,11 @@ matrix:
     allow_failures:
         # Try older scipy versions
         - python: 2.7
-          env: SCIPY_VERSION=0.16.0 NUMPY_VERSION=1.11
+          env: SCIPY_VERSION=0.16.0 NUMPY_VERSION=1.13
 
         # Try older scipy versions
         - python: 3.4
-          env: SCIPY_VERSION=0.16.0 NUMPY_VERSION=1.11
+          env: SCIPY_VERSION=0.16.0 NUMPY_VERSION=1.13
 
         # Try Astropy development version
         - python: 3.5
