@@ -1608,3 +1608,39 @@ class Lightcurve(object):
         self._n = None
         self.tseg = np.max(self.gti) - np.min(self.gti)
         self.tstart = self.time - 0.5 * self.dt
+
+    def to_lightkurve(self):
+        """
+        Returns a `lightkurve.Lightcurve` object.
+
+        This feature requires `Lightkurve <https://docs.lightkurve.org/>`_
+        to be installed (e.g. ``pip install lightkurve``).  An `ImportError` will
+        be raised if this package is not available.
+
+        Returns
+        -------
+        lightcurve : `lightkurve.LightCurve`
+            A lightkurve.LightCurve object.
+        """
+        try:
+            from lightkurve import LightCurve
+        except ImportError:
+            raise ImportError("You need to install Lightkurve to use "
+                              "the Lightcurve.to_lightkurve() method.")
+        return LightCurve(time=self.time, flux=self.counts, flux_err=self.counts_err)
+
+    @staticmethod
+    def from_lightkurve(lc):
+        """Create a new `Lightcurve` from a `lightkurve.LightCurve`.
+
+        Parameters
+        ----------
+        lc : `lightkurve.LightCurve`
+            A lightkurve LightCurve object.
+
+        Returns
+        -------
+        lightcurve : `stingray.Lightcurve`
+            A stingray.Lightcurve object.
+        """
+        return Lightcurve(time=lc.time, counts=lc.flux, err=lc.flux_err, input_counts=False)
